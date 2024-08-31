@@ -97,4 +97,5 @@ dependencies {
 
     implementation(libs.navigation.compose )
     implementation (libs.navigation.ui.ktx)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

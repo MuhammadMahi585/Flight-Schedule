@@ -68,7 +68,7 @@ fun MainScreen(
              )
             OutlinedTextField(
                 value = viewModel.name,
-                onValueChange = {viewModel.onNameChange(it)},
+                onValueChange = {viewModel.onNameChange(it) },
                 singleLine = true,
                 shape = MaterialTheme.shapes.large,
                 leadingIcon = {

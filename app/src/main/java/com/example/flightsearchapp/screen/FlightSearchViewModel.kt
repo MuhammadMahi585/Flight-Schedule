@@ -12,10 +12,14 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.flightsearchapp.FlightSearchApplication
 import com.example.flightsearchapp.data.Repository
+import com.example.flightsearchapp.data.UserPreferenceRepository
 import com.example.flightsearchapp.data.airport
 import com.example.flightsearchapp.data.favorite
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed interface DisplayControl {
@@ -23,7 +27,8 @@ sealed interface DisplayControl {
     object EmptySearch:DisplayControl
 }
 class FlightSearchViewModel(
-   private val repository:Repository
+   private val repository:Repository,
+    private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
     var name by mutableStateOf("")
     var screen:DisplayControl by mutableStateOf(DisplayControl.favortite)
@@ -69,11 +74,22 @@ class FlightSearchViewModel(
         }
     }
 
+    fun nameSet(name:String){
+        viewModelScope.launch {
+            userPreferenceRepository.saveName(name)
+        }
+    }
+    val uiState: StateFlow<String> = userPreferenceRepository.isName
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ""
+            )
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {
           initializer {
               val application = this[APPLICATION_KEY] as FlightSearchApplication
-              FlightSearchViewModel(application.container.repository)
+              FlightSearchViewModel(application.container.repository,application.userPreferencesRepository)
           }
         }
         }
