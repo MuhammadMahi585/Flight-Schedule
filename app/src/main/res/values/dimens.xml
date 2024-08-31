@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="small_padding">4.dp</dimen>
+    <dimen name="medium_padding">8.dp</dimen>
+    <dimen name="large_padding">16.dp</dimen>
+    <dimen name="bar_height">64.dp</dimen>
+    <dimen name="minor_padding">1.dp</dimen>
+    <dimen name="no_padding">0.dp</dimen>
+</resources>
