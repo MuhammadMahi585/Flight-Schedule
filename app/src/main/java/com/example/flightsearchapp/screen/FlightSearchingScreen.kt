@@ -87,17 +87,10 @@ fun MainScreen(
                             ))
             val fav by viewModel.getFavorite().collectAsState(initial = emptyList())
             val routeSchedule by viewModel.getList(viewModel.name).collectAsState(initial = emptyList())
-            val selected by viewModel.getShortedList("OPO").collectAsState(initial = emptyList())
             when(displayControl){
                 is DisplayControl.favortite ->    ViewFavorites(favorites = fav)
                 is DisplayControl.EmptySearch->    AutoCompleteList(airports = routeSchedule,navController)
             }
-           /* SelectedDestinationList(name = "OPO",
-                onAdd = {
-                    coroutineScope.launch {
-                        viewModel.addFav()
-                    }
-                },iata = "Fransico", viewModel = viewModel, selectedAirports = selected)*/
                 }
          }
      }

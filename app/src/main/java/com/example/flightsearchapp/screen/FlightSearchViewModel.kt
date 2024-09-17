@@ -1,6 +1,7 @@
 package com.example.flightsearchapp.screen
 
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,20 +27,32 @@ sealed interface DisplayControl {
     object favortite:DisplayControl
     object EmptySearch:DisplayControl
 }
+
 class FlightSearchViewModel(
    private val repository:Repository,
     private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
-    var name by mutableStateOf("")
+    var nameString: StateFlow<String> = userPreferenceRepository.isName
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = ""
+        )
+    var name by mutableStateOf(nameString.value)
+
     var screen:DisplayControl by mutableStateOf(DisplayControl.favortite)
 
     val _uistate = MutableStateFlow(UiState())
 
     var favoriteUiState by  mutableStateOf(UiState())
-    init {
-       updateScreenState()
+     init {
+        viewModelScope.launch {
+            userPreferenceRepository.isName.collect { storedName ->
+                name = storedName
+                updateScreenState()
+            }
+        }
     }
-
     fun getList(nameORIATA:String):Flow<List<airport>> =  repository.getAutoCompleteList(name = nameORIATA)
 
     fun getShortedList(nameS:String):Flow<List<airport>> = repository.getListExceptSearched(nameS)
@@ -60,8 +73,8 @@ class FlightSearchViewModel(
         }
     }
     fun getFavorite():Flow<List<favorite>> = repository.getFavoriteFlights()
-
     fun onNameChange(newName: String) {
+        nameSet(newName)
         name = newName
         updateScreenState()
     }
@@ -79,12 +92,6 @@ class FlightSearchViewModel(
             userPreferenceRepository.saveName(name)
         }
     }
-    val uiState: StateFlow<String> = userPreferenceRepository.isName
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = ""
-            )
     companion object {
         val factory: ViewModelProvider.Factory = viewModelFactory {
           initializer {
