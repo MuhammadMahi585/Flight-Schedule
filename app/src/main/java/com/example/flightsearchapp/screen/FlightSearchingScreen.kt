@@ -166,7 +166,7 @@ fun SelectedDestinationList(
                 items(selectedAirports) { airport ->
                     SelectedListCard(
                         airport = airport,
-                        OnAdd = onAdd,
+                        onAdd = onAdd,
                         viewModel = viewModel,
                         name = name,
                         iata = iata
@@ -176,11 +176,10 @@ fun SelectedDestinationList(
         }
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectedListCard(
     airport: airport,
-    OnAdd:()->Unit,
+    onAdd:()->Unit,
     viewModel: FlightSearchViewModel,
     name:String,
     iata:String) {
@@ -210,11 +209,11 @@ fun SelectedListCard(
                     verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
-                        text = "${iata} ",
+                        text = "$iata ",
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(
-                        text = "${name}",
+                        text = name,
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -234,7 +233,7 @@ fun SelectedListCard(
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(
-                        text = "${airport.name}",
+                        text = "$airport.name",
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -245,7 +244,7 @@ fun SelectedListCard(
             }
             IconButton(onClick = {addedButton=!addedButton
                 viewModel.addToFavorite(iata,airport.iata_code)
-                OnAdd()
+                onAdd()
             }) {
                 if(addedButton)
                 Icon(
@@ -294,7 +293,7 @@ fun ViewFavorites(
 fun FavoriteCard(
     favorite: favorite
 ){
-    Log.d("favorite","${favorite.departure_code}")
+    Log.d("favorite","$favorite.departure_code")
     Card (
         modifier = Modifier
             .fillMaxWidth()
